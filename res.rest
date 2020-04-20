@@ -8,9 +8,9 @@ Content-Type: application/json
 {
     "firstname" : "jules",
     "lastname" : "cruz",
-    "email" : "julian@mail.com",
-    "password" : "123456",
-    "telephone" : "456789",
+    "email" : "julianc@mail.com",
+    "password" : "1234456656",
+    "telephone" : "458756789",
     "date" : "4/25/2020, 5:10:45 PM"
 }
 
@@ -20,6 +20,16 @@ POST http://localhost:4000/users/login
 Content-Type: application/json
 
 {
+    "email" : "julianc@mail.com",
+    "password" : "1234456656"
+}
+
+####
+
+POST http://localhost:4000/users/login
+Content-Type: application/json
+
+{
     "email" : "julian@mail.com",
-    "password" : "pas"
+    "password" : "123456"
 }
