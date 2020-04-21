@@ -13,29 +13,23 @@ const userRoutes = require('./routes/userauth');
 
 app.use('/users', userRoutes);
 
-app.use(userRoutes);
-//middleware for error handling
-// app.use((err, req, res, next) => {
-//     if(res.headerSend){
-//         return next(err);
-//     }
-//     res.status(err.code || 500);
-//     res.json({message: err.message || "An unknown error occured"})
-// })
-
-
-
-
-//middleware to handle invalid routes
 app.use((req, res, next) => {
     return next(new httpErr("Could not find route", 404)) ;
 });
 
+//middleware for error handling
+app.use((err, req, res, next) => {
+    if(res.headerSend){
+        return next(err);
+    }
+    res.status(err.code || 500);
+    res.json({message: err.message || "An unknown error occured"})
+})
+//middleware to handle invalid routes
 
 
 
 const connURI = 'mongodb://localhost:27017/userDB';
-
 mongoose.connect(connURI,{ useNewUrlParser: true , useUnifiedTopology: true, useCreateIndex: true})
         .then( () => {
             app.listen(4000);

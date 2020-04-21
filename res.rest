@@ -44,10 +44,19 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:4000/users
+
+POST http://localhost:4000/users/modify
 Content-Type: application/json
 
 {
-    "email" : "julianc@mail.com",
-    "password" : "1234456656"
+    "firstname" : "Emille",
+    "email": "julianc@mail.com",
+    "user" : {
+        "firstname" : "jules",
+        "lastname" : "cruz",
+        "telephone" : "458756789"
+    }
 }
+
+###
+GET http://localhost:4000/ufgfg

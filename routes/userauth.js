@@ -2,16 +2,13 @@ const express =  require('express');
 const userController = require('../controllers/accountcontroller');
 const router = express.Router();
 const validator = require('express-validator');
-const authorize = require('../middleware/auth')
 //const emailvalidator = require('node-email-validation');
 
-router.get('/users', userController.getUsers);
+router.get('/', userController.getUsers);
 
-//router.use(authorize);
+router.post('/login', userController.loginUser);
 
-router.post('/users/login', userController.loginUser);
-
-router.post('/users/register', [
+router.post('/register', [
         validator.check('firstname').not().isEmpty(),
         validator.check('lastname').not().isEmpty(),
         validator.check('email').normalizeEmail().isEmail(),
@@ -20,6 +17,8 @@ router.post('/users/register', [
     ],
     userController.registerUser);
 
-router.delete('/users/remove', userController.deleteUser);
+router.delete('/remove', userController.deleteUser);
+
+router.post('/modify', userController.modifyUser);
 //export the routes
 module.exports = router;
