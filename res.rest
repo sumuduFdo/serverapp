@@ -33,3 +33,21 @@ Content-Type: application/json
     "email" : "julian@mail.com",
     "password" : "123456"
 }
+
+###
+DELETE http://localhost:4000/users/remove
+Content-Type: application/json
+
+{
+    "email" : "julianc@mail.com",
+    "password" : "1234456656"
+}
+
+###
+DELETE http://localhost:4000/users
+Content-Type: application/json
+
+{
+    "email" : "julianc@mail.com",
+    "password" : "1234456656"
+}

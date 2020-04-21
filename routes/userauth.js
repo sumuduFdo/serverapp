@@ -20,5 +20,6 @@ router.post('/users/register', [
     ],
     userController.registerUser);
 
+router.delete('/users/remove', userController.deleteUser);
 //export the routes
 module.exports = router;

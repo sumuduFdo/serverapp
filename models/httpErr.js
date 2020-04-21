@@ -1,3 +1,4 @@
+//httpErr class for handling and throwing exceptions
 class httpErr extends Error{
     constructor(msg, code){
         //create an error with a message and assign error code to httpErr

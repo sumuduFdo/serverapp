@@ -4,6 +4,7 @@ functions to be implemented
     modify user
 */
 
+//import required modules
 const jwtoken = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 }= require('uuid');
@@ -13,22 +14,14 @@ const httpErr = require('../models/httpErr');
 const userModel = require('../models/user');
 
 
-const modelUser = [{
-    userid: "1234",
-    firstname:"Tom",
-    lastname:"Cruise",
-    email: "tom@mail.com",
-    password: "password",
-    telephone: "123456",
-    date: new Date().toLocaleString()
-}];
-
+//retrieve all the users from the database
 const getUsers = async (req, res, next) => {
     let appusers;
     try{
         appusers = await userModel.find({}, 'firstname lastname email');
     }
     catch (err){
+        console.log(err);
         return next(new httpErr('Failed to get users, please try again'));
     }
 
@@ -36,6 +29,7 @@ const getUsers = async (req, res, next) => {
 };
 
 
+//register a user
 const registerUser = async (req, res, next) => {
 
     const errState = validator.validationResult(req);
@@ -49,6 +43,7 @@ const registerUser = async (req, res, next) => {
         found= await userModel.findOne({email: email});
     }
     catch (err) {
+        console.log(err);
         return next(new httpErr('Signup failed, Please try again', 500));
     }
 
@@ -63,6 +58,7 @@ const registerUser = async (req, res, next) => {
         hashPass = await bcrypt.hash(req.body.password, salt);
     }
     catch(err) {
+        console.log(err);
         return next(new httpErr('User regsitration failed . Please try again later', 500));
     }
     
@@ -82,6 +78,7 @@ const registerUser = async (req, res, next) => {
     
     }
     catch(err) {
+        console.log(err);
         return next(new httpErr('User registration failed. Please try again later', 500));
     }
 
@@ -98,6 +95,8 @@ const registerUser = async (req, res, next) => {
     res.status(201).json({userid: newUser.userid, email: newUser.email, firstname: newUser.firstname, lastname: newUser.lastname/*, token: usertoken*/});
 };
 
+
+//user sign-in
 const loginUser = async (req, res, next) => {
     const {email, password} = req.body;
 
@@ -106,6 +105,7 @@ const loginUser = async (req, res, next) => {
         containuser = await userModel.findOne({email: email});
     }
     catch (err) {
+        console.log(err);
         return next(new httpErr('Login failed, Please try again', 500));
     }
 
@@ -119,6 +119,7 @@ const loginUser = async (req, res, next) => {
         passwordstate = await bcrypt.compare(req.body.password, containuser.password);
     }
     catch(err){
+        console.log(err);
         return next(new httpErr('User login failed. Please check your password and try again later'), 500);
     }
     
@@ -140,34 +141,55 @@ const loginUser = async (req, res, next) => {
     
 };
 
-/*
-/////MEHTODS FOR USER DELETION AND MODIFICATION
-const deleteUser = async (req, res, next) =>{
-    const useremail = req.params.email;
-    
-    let user;
+
+//delete a user
+const deleteUser = async (req, res, next) => {
+
+    const {email, password} = req.body;
+
+    var containuser;
     try{
-        user = await userModel.findByEmail(useremail).populate;
+        containuser = await userModel.findOne({email: email});
+    }
+    catch (err) {
+        console.log(err);
+        return next(new httpErr('Could not find user, Please try again', 500));
+    }
+
+    
+    if(!containuser){
+            return next(new httpErr('Invalid user credentials. Could not find user.', 401));
+    }
+
+    let passwordstate = false;
+    try{
+        passwordstate = await bcrypt.compare(req.body.password, containuser.password);
     }
     catch(err){
-        return next(new httpErr('Error, could not delete user'));
+        console.log(err);
+        return next(new httpErr('User deletion failed. Please check your password and try again later'), 500);
+    }
+    
+    if(!passwordstate ){
+       return next(new httpErr('Invalid password, could not delete user', 401));
     }
 
-    if(!user){
-        return next(new httpErr('User not found', 404));
-    }
+    userModel.deleteOne({email: email}, (err, result, next) => {
+        if(err){
+            res.send(err)
+        }
+        else{
+            console.log("user deletion successful")
+            res.status(201).json({userid: containuser.userid, email: containuser.email});
+        }
+    });
+    
 
-    try{
-        const deleteSess = await mongoose.startSession();
-        deleteSess.startTransaction();
-        await userModel.remove({session: deleteSess});
-        await deleteSess.commitTransaction();
-    }
 };
-*/
 
-
+//export functions
 exports.getUsers = getUsers;
 exports.registerUser = registerUser;
 exports.loginUser = loginUser;
+exports.deleteUser = deleteUser;
 
